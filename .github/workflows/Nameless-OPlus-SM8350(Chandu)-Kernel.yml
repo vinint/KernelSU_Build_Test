@@ -44,6 +44,9 @@ jobs:
         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/3857008389202edac32d57008bb8c99d2c957f9d/clang-r383902.tar.gz
         tar -C clang-aosp/ -zxvf clang-r383902.tar.gz
     
+    - name: Check disk space
+      run: df -h
+      
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
@@ -52,6 +55,9 @@ jobs:
         sed -i 's/ -dirty//g' setlocalversion
         cd $GITHUB_WORKSPACE/patches
         sed -i '1687 r path_umount.c' $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/namespace.c
+
+    - name: Check disk space
+      run: df -h
 
     - name: Setup KernelSU
       run: |
@@ -74,7 +80,7 @@ jobs:
         DEFCONFIG="vendor/lahaina-qgki_defconfig"
         make O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD $DEFCONFIG
         make -j$(nproc --all) O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD 
-    
+        
     - name: Check a kernel output files
       run: |
        cd $GITHUB_WORKSPACE/kernel_workspace
